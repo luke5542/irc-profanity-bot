@@ -103,7 +103,7 @@ struct FoulUser
 immutable QUERY_FOULEST_MOUTH = 
 "SELECT u.nickname, u.total_offenses, ufu.count, ufu.word
   FROM (Users u INNER JOIN UserFoulUsage ufu ON u.nickname = ufu.user)
-  ORDER BY u.total_offenses DESC LIMIT 1;";
+  ORDER BY u.total_offenses DESC, ufu.count DESC LIMIT 1;";
 
 alias FoulMouthTuple = Nullable!(Tuple!(FoulUser, OffensiveWord));
 FoulMouthTuple getFoulestMouth()

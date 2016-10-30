@@ -40,9 +40,14 @@ void connect()
     bot.connect(host, port, password);
 }
 
-void sendMessage(string message)
+void sendMessage(string message, bool notice = false)
 {
-	bot.send(channels[0], message);
+	bot.send(channels[0], message, notice);
+}
+
+void sendUserMessage(string user, string message, bool notice = true)
+{
+	bot.send(user, message, notice);
 }
 
 /*
@@ -55,17 +60,17 @@ bool parseCommand(Message message)
     {
         return false;
     }
-    if(indexOf(message.message, "!ProfanityHelp") == 0)
+    if(indexOf(message.message, "!ProfanityHelp", CaseSensitive.no) == 0 || indexOf(message.message, "!fuckhelp", , CaseSensitive.no) == 0)
     {
         string messageToSend = "The available commands are:"
         ~ "\n!ProfanityHelp - display this message."
         ~ "\n!FoulestMouth  - get the worst offender and their favorite word."
         ~ "\n!TopOffenses   - list the 5 most commonly used offensive words."
         ~ "\n!MyOffenses    - list your personal stats, with your top 5 most offensive words.";
-        sendMessage(messageToSend);
+        sendUserMessage(message.sender.nickname, messageToSend);
         return true;
     }
-	else if(indexOf(message.message, "!FoulestMouth") == 0)
+	else if(indexOf(message.message, "!FoulestMouth", CaseSensitive.no) == 0)
     {
         auto foulest = getFoulestMouth();
         if(!foulest.isNull)
@@ -73,11 +78,11 @@ bool parseCommand(Message message)
             string messageToSend = foulest[0].nickname ~ " has uttered " ~ to!string(foulest[0].total_offenses) ~
             " horrible things. Their favorite offense is: " ~ foulest[1].foul_word ~
             ", which they uttered " ~ to!string(foulest[1].total_uses) ~ " times.";
-            sendMessage(messageToSend);
+            sendUserMessage(message.sender.nickname, messageToSend);
             return true;
         }
     }
-    else if(indexOf(message.message, "!TopOffenses") == 0)
+    else if(indexOf(message.message, "!TopOffenses", CaseSensitive.no) == 0)
     {
         auto offenses = getMostCommonOffenses();
         if(offenses != null)
@@ -87,11 +92,11 @@ bool parseCommand(Message message)
             {
                 messageToSend = messageToSend ~ "\n" ~ word.foul_word ~ ": " ~ to!string(word.total_uses);
             }
-            sendMessage(messageToSend);
+            sendUserMessage(message.sender.nickname, messageToSend);
             return true;
         }
     }
-    else if(indexOf(message.message, "!MyOffenses") == 0)
+    else if(indexOf(message.message, "!MyOffenses", CaseSensitive.no) == 0)
     {
         auto user = getUser(message.sender.nickname);
         auto offenses = getMyOffenses(message.sender.nickname);
@@ -114,9 +119,13 @@ bool parseCommand(Message message)
                 {
                     messageToSend = messageToSend ~ "\n" ~ word.foul_word ~ ": " ~ to!string(word.total_uses);
                 }
-                sendMessage(messageToSend);
+                sendUserMessage(message.sender.nickname, messageToSend);
                 return true;
             }
+        }
+        else
+        {
+            sendUserMessage(message.sender.nickname, message.sender.nickname ~ " has a clean record!");
         }
     }
     
