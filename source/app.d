@@ -1,24 +1,3 @@
-/*import vibe.d;
-
-shared static this()
-{
-	auto settings = new HTTPServerSettings;
-	settings.port = 8080;
-	settings.bindAddresses = ["::1", "127.0.0.1"];
-	listenHTTP(settings, &hello);
-
-	logInfo("Please open http://127.0.0.1:8080/ in your browser.");
-}
-
-void hello(HTTPServerRequest req, HTTPServerResponse res)
-{
-	res.writeBody("Hello, World!");
-}*/
-
-/++
-    Connects to a server and joins all specified channels.
-    Logs all events that occur to stdout.
-+/
 import core.time;
 import std.functional;
 import std.stdio;
@@ -82,7 +61,9 @@ bool parseCommand(Message message)
         ~ "\n!ProfanityHelp - display this message."
         ~ "\n!FoulestMouth  - get the worst offender and their favorite word."
         ~ "\n!TopOffenses   - list the 5 most commonly used offensive words."
-        ~ "\n!MyOffenses    - list your personal stats, with your top 5 most offensive words."
+        ~ "\n!MyOffenses    - list your personal stats, with your top 5 most offensive words.";
+        sendMessage(messageToSend);
+        return true;
     }
 	else if(indexOf(message.message, "!FoulestMouth") == 0)
     {
@@ -112,8 +93,8 @@ bool parseCommand(Message message)
     }
     else if(indexOf(message.message, "!MyOffenses") == 0)
     {
-        auto user = getUser(message.sender);
-        auto offenses = getMyOffenses(message.sender);
+        auto user = getUser(message.sender.nickname);
+        auto offenses = getMyOffenses(message.sender.nickname);
         if(offenses != null)
         {
             if(offenses.length != 0)
@@ -122,10 +103,10 @@ bool parseCommand(Message message)
                 if(!user.isNull)
                 {
                     messageToSend = messageToSend ~ "Stats for " ~ user.nickname ~ ":";
-                    messageToSend = messageToSend ~ "\nTotal Offenses - " ~ user.total_offenses;
-                    messageToSend = messageToSend ~ "\nThis Year's Offenses - " ~ user.year_offenses;
-                    messageToSend = messageToSend ~ "\nThis Month's Offenses - " ~ user.month_offenses;
-                    messageToSend = messageToSend ~ "\nThis Week's Offenses - " ~ user.week_offenses;
+                    messageToSend = messageToSend ~ "\nTotal Offenses - " ~ to!string(user.total_offenses);
+                    messageToSend = messageToSend ~ "\nThis Year's Offenses - " ~ to!string(user.year_offenses);
+                    messageToSend = messageToSend ~ "\nThis Month's Offenses - " ~ to!string(user.month_offenses);
+                    messageToSend = messageToSend ~ "\nThis Week's Offenses - " ~ to!string(user.week_offenses);
                 }
                 
                 messageToSend = messageToSend ~ "\nYour top offenses are:";
@@ -198,8 +179,14 @@ void onMessage(Message message)
     );
 	
 	if(!parseCommand(message))
+    {
 		if(parseMessageProfanity(message))
         	sendMessage(message.sender.nickname ~ ", wash your mouth of that filth!");
+    }
+    else
+    {
+        writeln("Command Found");
+    }
 }
 
 void onUserJoin(User user, string channel)

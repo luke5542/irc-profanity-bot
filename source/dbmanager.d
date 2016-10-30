@@ -32,6 +32,7 @@ week_offenses=
   THEN week_offenses + 1
   ELSE 1
 END),
+total_offenses = total_offenses + 1,
 last_updated=NOW();";
 
 immutable QUERY_PROFANITY =
@@ -102,7 +103,7 @@ struct FoulUser
 immutable QUERY_FOULEST_MOUTH = 
 "SELECT u.nickname, u.total_offenses, ufu.count, ufu.word
   FROM (Users u INNER JOIN UserFoulUsage ufu ON u.nickname = ufu.user)
-  ORDER BY u.total_offenses LIMIT 1;";
+  ORDER BY u.total_offenses DESC LIMIT 1;";
 
 alias FoulMouthTuple = Nullable!(Tuple!(FoulUser, OffensiveWord));
 FoulMouthTuple getFoulestMouth()
@@ -139,7 +140,7 @@ struct OffensiveWord
 
 immutable QUERY_COMMON_OFFENSES = 
 "SELECT foul_word, total_uses FROM Profanity
-  ORDER BY total_uses LIMIT 5;";
+  ORDER BY total_uses DESC LIMIT 5;";
 
 OffensiveWord[] getMostCommonOffenses()
 {
@@ -168,7 +169,7 @@ OffensiveWord[] getMostCommonOffenses()
 immutable QUERY_MY_OFFENSES = 
 "SELECT * FROM UserFoulUsage
   WHERE user = ?
-  ORDER BY count LIMIT 5;";
+  ORDER BY count DESC LIMIT 5;";
 
 OffensiveWord[] getMyOffenses(string user)
 {
@@ -178,13 +179,13 @@ OffensiveWord[] getMyOffenses(string user)
     OffensiveWord toWord(Row r)
     {
         OffensiveWord word;
-        word.foul_word = r[0].get!(ulong);
-        word.total_uses = r[1].get!(string);
+        word.total_uses = r[0].get!(ulong);
+        word.foul_word = r[1].get!(string);
         return word;
     }
     //Return the top 5 most common foul words,
     //allong with their total usages.
-    auto queryCmd = Command(con, QUERY_COMMON_OFFENSES);
+    auto queryCmd = Command(con, QUERY_MY_OFFENSES);
     queryCmd.prepare();
     queryCmd.bindParameter(user, 0);
     auto result = queryCmd.execPreparedResult();
@@ -202,16 +203,19 @@ immutable QUERY_GET_USER =
 
 Nullable!FoulUser getUser(string user)
 {
-    auto queryFoulestCmd = Command(con, QUERY_FOULEST_MOUTH);
+    auto con = db.lockConnection();
+    scope(exit) con.close();
+    
+    auto queryFoulestCmd = Command(con, QUERY_GET_USER);
     queryFoulestCmd.prepare();
-    queryCmd.bindParameter(user, 0);
+    queryFoulestCmd.bindParameter(user, 0);
     auto result = queryFoulestCmd.execPreparedResult();
     if(result.length >= 1)
     {
         auto entry = result.front();
-        FoulUser user;
-        entry.toStruct(user);
-        return Nullable!FoulUser(user);
+        FoulUser fuser;
+        entry.toStruct(fuser);
+        return Nullable!FoulUser(fuser);
     }
     
     return Nullable!FoulUser.init;
