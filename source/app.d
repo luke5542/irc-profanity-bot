@@ -60,7 +60,7 @@ bool parseCommand(Message message)
     {
         return false;
     }
-    if(indexOf(message.message, "!ProfanityHelp", CaseSensitive.no) == 0 || indexOf(message.message, "!fuckhelp", , CaseSensitive.no) == 0)
+    if(indexOf(message.message, "!ProfanityHelp", CaseSensitive.no) == 0 || indexOf(message.message, "!fuckhelp", CaseSensitive.no) == 0)
     {
         string messageToSend = "The available commands are:"
         ~ "\n!ProfanityHelp - display this message."
