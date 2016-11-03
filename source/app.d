@@ -9,18 +9,14 @@ import vibeirc;
 
 import profanitycheck;
 import dbmanager;
+import config;
 
 IRCClient bot;
-string host = "irc.rizon.net";;
-string nickname = "ProfanityBot";
-string password;
-string[] channels = ["#lelandcs"];
-ushort port = 6667;
 
 shared static this()
 {
     bot = new IRCClient;
-    bot.nickname = nickname;
+    bot.nickname = ircConfig.nickname;
     bot.onDisconnect = toDelegate(&onDisconnect);
     bot.onLogin = toDelegate(&onLogin);
     bot.onMessage = toDelegate(&onMessage);
@@ -37,12 +33,12 @@ shared static this()
 
 void connect()
 {
-    bot.connect(host, port, password);
+    bot.connect(ircConfig.host, ircConfig.port, ircConfig.password);
 }
 
-void sendMessage(string message, bool notice = false)
+void sendMessage(string channel, string message, bool notice = false)
 {
-	bot.send(channels[0], message, notice);
+	bot.send(channel, message, notice);
 }
 
 void sendUserMessage(string user, string message, bool notice = true)
@@ -145,7 +141,7 @@ void onLogin()
 {
     writeln("Logged in");
     
-    foreach(channel; channels)
+    foreach(channel; ircConfig.channels)
     {
         writeln("Joining ", channel);
         bot.join(channel);
@@ -190,7 +186,7 @@ void onMessage(Message message)
 	if(!parseCommand(message))
     {
 		if(parseMessageProfanity(message))
-        	sendMessage(message.sender.nickname ~ ", wash your mouth of that filth!");
+        	sendMessage(message.target, message.sender.nickname ~ ", wash your mouth of that filth!");
     }
     else
     {

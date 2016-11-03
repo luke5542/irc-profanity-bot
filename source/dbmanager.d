@@ -5,13 +5,14 @@ import std.array;
 import std.algorithm.iteration;
 
 import mysql;
+import config;
 
 MysqlDB db;
 
 shared static this()
 {
-    db = new MysqlDB(/*ip address, or localhost*/"127.0.0.1", /*user*/"ircbot",
-                    /*password*/"somemagicalpassword", /*db-name*/"ProfanityBot");
+    db = new MysqlDB(dbConfig.host, dbConfig.user,
+                     dbConfig.password, /*db-name*/"ProfanityBot");
 }
 
 immutable QUERY_USER =

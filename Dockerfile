@@ -21,13 +21,19 @@ RUN \
     && \
     
   # Build the program...
-  dub
+  dub build
   
   # Cleanup files...
   rm -rf .dub
   rm -rf source/
   rm -rf *.json
   rm -rf *.sdl
+
+  # Remove what we no longer need
+  apt-get uninstall \
+    dmd-bin \
+    dub \
+    && \
 
   # Now clean out the apt-get cache
   apt-get autoclean && apt-get clean && \

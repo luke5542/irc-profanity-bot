@@ -1,0 +1,20 @@
+version: '2'
+services:
+  web:
+    depends_on:
+     - mariadb
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - mariadb
+    volumes:
+      - /Users/devin/Documents/code/dlang/vibed/irc-profanity-monitor/sql_data:/docker-entrypoint-initdb.d
+    ports:
+      - "8000:80"
+    restart: always
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - "3305:3305"

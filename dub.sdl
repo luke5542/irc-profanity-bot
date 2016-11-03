@@ -3,6 +3,7 @@ description "An IRC bot that monitors a chat and keeps a record of the usage of 
 authors "Devin Ridgway"
 copyright "Copyright © 2016, Devin Ridgway"
 license "proprietary"
+dependency "sdlang-d" version="~>0.10.1"
 dependency "vibe-d" version="~>0.7.26"
 dependency "vibeirc" version="~>2.1.4"
 dependency "mysql-native" version="~>0.1.6"
