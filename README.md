@@ -1,6 +1,12 @@
+IRC Profanity Bot
+===
+
+This bot is designed to be used either inside or outside a Docker environment. Customization is done via the `ircbot.sdl` config file, and example of which is as follows:
+
+```SDL
 irc {
     host "irc.rizon.net"
-    channels "#somechannel"
+    channels "#susa" "#channel2"
     
     //Optional - default is 6667
     port 6667
@@ -15,3 +21,4 @@ mariadb {
     user "ircbot"
     password "somemagicalpassword"
 }
+```

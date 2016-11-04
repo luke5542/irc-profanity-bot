@@ -128,26 +128,3 @@ shared static this()
     }
     dbConfig = cast(immutable)mdbCfg;
 }
-
-/*
-Sample SDL file:
-
-irc {
-    host "irc.rizon.net"
-    channels "#lelandcs"
-    
-    //Optional - default is 6667
-    port 6667
-    //Optional - default is "ProfanityBot"
-    nickname "ProfanityBot"
-    //Optional - default is empty
-    password "hodor"
-}
-
-mariadb {
-    host "127.0.0.1"
-    user "ircbot"
-    password "somemagicalpassword"
-}
-
-*/
