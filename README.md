@@ -22,3 +22,5 @@ mariadb {
     password "somemagicalpassword"
 }
 ```
+
+The bot relies on a SQL database connection to store the profanity data, with MariaDB being the recommended software and what is used in the `docker-compose` script.
