@@ -11,7 +11,7 @@ MysqlDB db;
 
 shared static this()
 {
-    db = new MysqlDB(dbConfig.host, dbConfig.user,
+    db = new MysqlDB(dbConfig.host, dbConfig.username,
                      dbConfig.password, /*db-name*/"ProfanityBot");
 }
 

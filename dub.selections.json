@@ -3,9 +3,13 @@
 	"versions": {
 		"libasync": "0.7.9",
 		"libevent": "2.0.1+2.0.16",
+		"libinputvisitor": "1.2.2",
 		"memutils": "0.4.7",
 		"mysql-native": "0.1.6",
 		"openssl": "1.1.4+1.0.1g",
+		"sdlang-d": "0.10.1",
+		"taggedalgebraic": "0.10.4",
+		"unit-threaded": "0.6.35",
 		"vibe-d": "0.7.29",
 		"vibeirc": "2.1.4"
 	}
